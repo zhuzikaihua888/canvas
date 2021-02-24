@@ -12,36 +12,50 @@
    var canvas = document.getElementById("canvas");
    canvas.width=document.documentElement.clientWidth
    canvas.height=document.documentElement.clientHeight 
-    
-  
-      var ctx = canvas.getContext("2d");
-      let painting = false
-      ctx.fillStyle =' black';
-    var isTouchDeice ='ontouchstart' in
-    document.documentElement;
+   var ctx = canvas.getContext("2d");
+ 
+   ctx.fillStyle = 'black';
+   ctx.strokeStyle ='black'
+   ctx.LineWidth = 180;
+   ctx.LineCap= "round";
+  function drawLine(x1,y1,x2,y2){
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+  }
+
+
+  let painting = false  
+  let last
+  var isTouchDeice ='ontouchstart' in
+  document.documentElement;
    
+   
+
   if(isTouchDeice){
      canvas.ontouchmove=(e)=>{
           let x =e.touches[0].clientX
           let y =e.touches[0].clientY
-          ctx.beginPath();
-          ctx.arc (x,y , 10, 0,2 * Math.PI);
-          ctx.stroke();
-          ctx.fill();
+          drawLine(last[0], last[1],x, y)
+          last = [x,y]
+        
         }
   
-   
-   
-    }else{canvas.onmousedown = () =>{
-     painting=true
-     }
-          canvas.onmousemove=(e) =>{
-      if(painting===true){
-        ctx.beginPath();
-      ctx.arc (e.clientX, e.clientY, 10, 0,2 * Math.PI);
-      ctx.stroke();
-      ctx.fill();
-     }else{
+   }else{
+     canvas.onmousedown = (e) =>{
+         painting=true
+         last = [e.clientX,e.clientY]
+
+        }
+     canvas.onmousemove=(e) =>{
+         if(painting===true){
+             drawLine(last[0], last[1], e.clientX, e.clientY)
+             last = [e.clientX,e.clientY]
+        
+     
+     
+       }else{
        console.log('什么都不做')
      }
    }
